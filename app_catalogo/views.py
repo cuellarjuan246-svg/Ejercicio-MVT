@@ -46,7 +46,7 @@ def autores(request):
     )
 
 
-def reporte(request):
+def logica(request):
     total = len(LIBROS)
     disponibles = sum(1 for libro in LIBROS if libro["disponible"])
     prestados = total - disponibles
@@ -68,7 +68,7 @@ def reporte(request):
         "porcentaje_disponible": porcentaje_disponible,
         "libros_por_genero": libros_por_genero,
     }
-    return render(request, "app_catalogo/reporte.html", contexto)
+    return render(request, "app_catalogo/logica.html", contexto)
 
 
 def sugerir(request):

@@ -67,8 +67,8 @@ class InicioViewTests(TestCase):
         )
         self.assertContains(response, "Marta Ríos: 2 libros")
 
-    def test_reporte_muestra_conteos_porcentaje_y_generos(self):
-        response = self.client.get("/reporte/")
+    def test_logica_muestra_conteos_porcentaje_y_generos(self):
+        response = self.client.get("/logica/")
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["total"], 6)
@@ -91,15 +91,15 @@ class InicioViewTests(TestCase):
         {"genero": "ciencia", "disponible": True},
         {"genero": "novela", "disponible": False},
     ])
-    def test_reporte_muestra_advertencia_si_porcentaje_es_menor_a_50(self):
-        response = self.client.get("/reporte/")
+    def test_logica_muestra_advertencia_si_porcentaje_es_menor_a_50(self):
+        response = self.client.get("/logica/")
 
         self.assertEqual(response.context["porcentaje_disponible"], 33)
         self.assertContains(response, "Advertencia:")
 
     @patch("app_catalogo.views.LIBROS", [])
-    def test_reporte_con_catalogo_vacio_evitan_division_por_cero(self):
-        response = self.client.get("/reporte/")
+    def test_logica_con_catalogo_vacio_evitan_division_por_cero(self):
+        response = self.client.get("/logica/")
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["porcentaje_disponible"], 0)
