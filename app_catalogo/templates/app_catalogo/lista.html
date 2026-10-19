@@ -1,0 +1,29 @@
+{% extends "app_catalogo/base.html" %}
+
+{% block title %}Libros{% endblock %}
+
+{% block content %}
+    <h1>Libros{% if genero %} de {{ genero }}{% endif %}</h1>
+
+    <p>
+        Filtrar:
+        <a href="{% url 'lista_libros' %}">Todos</a> |
+        <a href="{% url 'lista_libros' %}?genero=novela">Novela</a> |
+        <a href="{% url 'lista_libros' %}?genero=tecnologia">Tecnología</a> |
+        <a href="{% url 'lista_libros' %}?genero=ciencia">Ciencia</a>
+    </p>
+
+    <ul>
+        {% for libro in libros %}
+            <li>
+                <a href="{% url 'detalle_libro' libro.id %}">{{ libro.titulo }}</a>
+                ({{ libro.anio }})
+                {% if libro.disponible %}Disponible{% else %}Prestado{% endif %}
+            </li>
+        {% empty %}
+            <li>No hay libros de ese género.</li>
+        {% endfor %}
+    </ul>
+
+    <p>Total: {{ libros|length }}</p>
+{% endblock %}

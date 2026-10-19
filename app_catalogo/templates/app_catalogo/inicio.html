@@ -1,0 +1,14 @@
+{% extends "app_catalogo/base.html" %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+    <h1>Bienvenido a {{ nombre_sitio }}</h1>
+    <p>Tenemos {{ total }} libros en el catálogo.</p>
+    <p>Libros disponibles: {{ libros_disponibles }}</p>
+    <p>Libros prestados: {{ libros_prestados }}</p>
+
+    {% if libros_prestados == 0 %}
+        <p>¡Todos los libros están en la biblioteca!</p>
+    {% endif %}
+{% endblock %}
