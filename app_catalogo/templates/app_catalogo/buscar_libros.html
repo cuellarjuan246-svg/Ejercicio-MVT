@@ -1,0 +1,39 @@
+{% extends "app_catalogo/base.html" %}
+
+{% block title %}Búsqueda: {{ nombre }}{% endblock %}
+
+{% block content %}
+    <h1>Resultados para “{{ nombre }}”</h1>
+    <table style="width: 100%; border: 2px solid #222; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th style="border: 1px solid #222; padding: 8px;">ID</th>
+                <th style="border: 1px solid #222; padding: 8px;">Nombre</th>
+                <th style="border: 1px solid #222; padding: 8px;">Autor</th>
+                <th style="border: 1px solid #222; padding: 8px;">Género</th>
+                <th style="border: 1px solid #222; padding: 8px;">Año de publicación</th>
+                <th style="border: 1px solid #222; padding: 8px;">Precio</th>
+                <th style="border: 1px solid #222; padding: 8px;">Ubicación</th>
+                <th style="border: 1px solid #222; padding: 8px;">Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for libro in libros %}
+                <tr>
+                    <td style="border: 1px solid #222; padding: 8px;">{{ libro.id }}</td>
+                    <td style="border: 1px solid #222; padding: 8px;"><a href="{% url 'detalle_libro' libro.id %}">{{ libro.titulo }}</a></td>
+                    <td style="border: 1px solid #222; padding: 8px;">{{ libro.autor }}</td>
+                    <td style="border: 1px solid #222; padding: 8px;">{{ libro.genero }}</td>
+                    <td style="border: 1px solid #222; padding: 8px;">{{ libro.anio_publicacion }}</td>
+                    <td style="border: 1px solid #222; padding: 8px;">{{ libro.precio }}</td>
+                    <td style="border: 1px solid #222; padding: 8px;">{{ libro.ubicacion }}</td>
+                    <td style="border: 1px solid #222; padding: 8px;">{{ libro.disponible|yesno:"Disponible,No disponible" }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="8" style="border: 1px solid #222; padding: 8px;">No se encontraron libros con ese nombre.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

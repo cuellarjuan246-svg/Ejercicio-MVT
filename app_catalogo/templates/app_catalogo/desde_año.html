@@ -1,0 +1,16 @@
+{% extends 'app_catalogo/base.html' %}
+
+{% block title %}Libros desde {{ anio }}{% endblock %}
+
+{% block content %}
+    <h1>Libros desde {{ anio }}</h1>
+    {% if libros %}
+        <ul>
+            {% for libro in libros %}
+                <li>{{ libro.titulo }} - {{ libro.autor }} ({{ libro.anio }})</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay libros disponibles desde el año {{ anio }}.</p>
+    {% endif %}
+{% endblock %}

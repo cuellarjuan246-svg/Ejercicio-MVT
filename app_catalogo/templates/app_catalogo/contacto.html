@@ -5,4 +5,45 @@
     <h1>Contacto</h1>
     <p>Correo: contacto@ejemplo.com</p>
     <p>Horario de atención: lunes a viernes, de 9:00 a 17:00.</p>
+
+    <form method="post" action="{% url 'contacto' %}">
+        {% csrf_token %}
+
+        <label for="nombre">Nombre completo:</label>
+        <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre completo" value="{{ nombre|default:'' }}">
+        <br><br>
+
+        <label for="correo">Correo electrónico:</label>
+        <input type="email" id="correo" name="correo" required placeholder="tucorreo@ejemplo.com" value="{{ correo|default:'' }}">
+        <br><br>
+
+        <label for="motivo">Motivo del contacto:</label>
+        <select id="motivo" name="motivo" required>
+            <option value="">-- Selecciona una opción --</option>
+            <option value="consulta" {% if motivo == "consulta" %}selected{% endif %}>Consulta general</option>
+            <option value="soporte" {% if motivo == "soporte" %}selected{% endif %}>Soporte técnico</option>
+            <option value="otros" {% if motivo == "otros" %}selected{% endif %}>Otros</option>
+        </select>
+        <br><br>
+
+        <label for="mensaje">Mensaje:</label><br>
+        <textarea id="mensaje" name="mensaje" rows="5" cols="40" required placeholder="Escribe tu mensaje aquí...">{{ mensaje|default:'' }}</textarea>
+        <br><br>
+
+        <label>
+            <input type="checkbox" name="acepta_terminos" required>
+            Acepto los términos y condiciones
+        </label>
+        <br><br>
+
+        <button type="submit">Enviar mensaje</button>
+    </form>
+
+    {% if enviado %}
+        <p>Gracias, {{ nombre }}. Tu mensaje fue enviado correctamente.</p>
+    {% endif %}
+
+    {% if error %}
+        <p>{{ error }}</p>
+    {% endif %}
 {% endblock %}

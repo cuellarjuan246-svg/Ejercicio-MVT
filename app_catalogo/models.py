@@ -8,7 +8,7 @@ class usuario(models.Model):
     fecha_registro = models.DateTimeField(auto_now_add=True)
     fecha_nacimiento = models.DateField()
     genero = models.CharField(max_length=10, choices=[("M", "Masculino"), ("F", "Femenino")])
-    rol = models.CharField(max_length=20, choices=[("admin", "Administrador"), ("usuario", "Usuario")], default="usuario")
+    rol = models.CharField(max_length=20, choices=[("admin", "Administrador"), ("estudiante", "Estudiante"), ("usuario", "Usuario"), ("instructor", "Instructor")], default="usuario")
 
     def _str_(self):
         return self.nombre
@@ -16,6 +16,7 @@ class usuario(models.Model):
 
 class editorial(models.Model):
     id = models.AutoField(primary_key=True)
+    
     nombre = models.CharField(max_length=100)
     direccion = models.CharField(max_length=200)
     telefono = models.CharField(max_length=15)

@@ -1,8 +1,9 @@
-from django.http import Http404, HttpResponse
-from django.shortcuts import render
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, render
 from django.views.generic import TemplateView
 
-from .datos import LIBROS, buscar_libro
+from .datos import LIBROS
+from .models import libro
 
 
 def inicio(request):
@@ -19,14 +20,28 @@ def inicio(request):
 
 def lista_libros(request):
     genero = request.GET.get("genero", "")
+    libros = libro.objects.order_by("id")
     if genero:
-        libros = [libro for libro in LIBROS if libro["genero"] == genero]
-    else:
-        libros = LIBROS
+        libros = libros.filter(genero=genero)
     return render(
         request,
         "app_catalogo/lista.html",
         {"libros": libros, "genero": genero},
+    )
+
+
+def buscar_libros_por_nombre(request, nombre=""):
+    nombre = nombre or request.GET.get("nombre", "").strip()
+    libros = libro.objects.none()
+    if nombre:
+        libros = libro.objects.filter(titulo__icontains=nombre).select_related(
+            "editorial",
+            "tema",
+        ).order_by("id")
+    return render(
+        request,
+        "app_catalogo/buscar_libros.html",
+        {"libros": libros, "nombre": nombre},
     )
 
 
@@ -47,26 +62,11 @@ def autores(request):
 
 
 def logica(request):
-    total = len(LIBROS)
     disponibles = sum(1 for libro in LIBROS if libro["disponible"])
-    prestados = total - disponibles
-    porcentaje_disponible = round(disponibles * 100 / total) if total else 0
-
-    cantidad_por_genero = {}
-    for libro in LIBROS:
-        genero = libro["genero"]
-        cantidad_por_genero[genero] = cantidad_por_genero.get(genero, 0) + 1
-    libros_por_genero = [
-        {"genero": genero, "cantidad": cantidad}
-        for genero, cantidad in sorted(cantidad_por_genero.items())
-    ]
-
+    libros_mostrar = [libro for libro in LIBROS if libro["disponible"]]
     contexto = {
-        "total": total,
         "disponibles": disponibles,
-        "prestados": prestados,
-        "porcentaje_disponible": porcentaje_disponible,
-        "libros_por_genero": libros_por_genero,
+        "libros": libros_mostrar,
     }
     return render(request, "app_catalogo/logica.html", contexto)
 
@@ -83,10 +83,8 @@ def sugerir(request):
 
 
 def detalle_libro(request, libro_id):
-    libro = buscar_libro(libro_id)
-    if libro is None:
-        raise Http404("El libro no existe")
-    return render(request, "app_catalogo/detalle.html", {"libro": libro})
+    libro_obj = get_object_or_404(libro, pk=libro_id)
+    return render(request, "app_catalogo/detalle.html", {"libro": libro_obj})
 
 
 def hola(request):
@@ -98,8 +96,29 @@ def cuadrado(request, numero):
     return HttpResponse(f"El cuadrado de {numero} es {resultado}")
 
 
-class ContactoView(TemplateView):
-    template_name = "app_catalogo/contacto.html"
+def contacto(request):
+    contexto = {}
+    if request.method == "POST":
+        nombre = request.POST.get("nombre", "").strip()
+        correo = request.POST.get("correo", "").strip()
+        motivo = request.POST.get("motivo", "").strip()
+        mensaje = request.POST.get("mensaje", "").strip()
+        acepta_terminos = request.POST.get("acepta_terminos")
+
+        if nombre and correo and motivo and mensaje and acepta_terminos:
+            contexto["enviado"] = True
+            contexto["nombre"] = nombre
+        else:
+            contexto["error"] = "Completa todos los campos obligatorios."
+            contexto.update(
+                {
+                    "nombre": nombre,
+                    "correo": correo,
+                    "motivo": motivo,
+                    "mensaje": mensaje,
+                }
+            )
+    return render(request, "app_catalogo/contacto.html", contexto)
 
 
 class AcercaView(TemplateView):

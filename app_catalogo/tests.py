@@ -2,6 +2,8 @@ from unittest.mock import patch
 
 from django.test import TestCase
 
+from .models import libro
+
 
 class InicioViewTests(TestCase):
     def test_muestra_cantidad_de_libros_disponibles_y_prestados(self):
@@ -31,6 +33,56 @@ class InicioViewTests(TestCase):
         self.assertEqual(len(response.context["libros"]), 3)
         self.assertContains(response, "Cuentos del Magdalena")
         self.assertNotContains(response, "Python desde cero")
+
+    def test_lista_muestra_id_nombre_y_autor_de_todos_los_libros(self):
+        response = self.client.get("/libros/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["libros"].count(), 16)
+        self.assertContains(response, "<th>ID</th>")
+        self.assertContains(response, "<th>Nombre</th>")
+        self.assertContains(response, "<th>Autor</th>")
+        self.assertContains(response, "Minecraft: Guía de construcción")
+        self.assertContains(response, "Cien años de soledad")
+
+    def test_id_de_libro_se_genera_automaticamente(self):
+        nuevo_libro = libro.objects.create(
+            titulo="Libro de prueba",
+            autor="Autor de prueba",
+            genero="prueba",
+            anio_publicacion=2026,
+            precio="10.00",
+            ubicacion="Estante de prueba",
+        )
+
+        self.assertEqual(nuevo_libro.pk, 17)
+
+    def test_busqueda_por_nombre_muestra_ficha_completa(self):
+        response = self.client.get("/libros/nombre/Minecraft/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["libros"].count(), 1)
+        self.assertContains(response, "Minecraft: Guía de construcción")
+        self.assertContains(response, "<th>Precio</th>")
+        self.assertContains(response, "<th>Estado</th>")
+        self.assertContains(response, "Disponible")
+        self.assertNotContains(response, "Editorial")
+        self.assertNotContains(response, "Tema")
+        self.assertNotContains(response, "No disponible")
+        self.assertNotContains(response, ">Nuevo<")
+
+        response = self.client.get("/libros/nombre/Animales/")
+        self.assertContains(response, "No disponible")
+
+    def test_busqueda_por_nombre_desde_formulario_y_sin_coincidencias(self):
+        response = self.client.get("/libros/nombre/", {"nombre": "cocina"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Cocina para todos")
+
+        response = self.client.get("/libros/nombre/no-existe/")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "No se encontraron libros con ese nombre.")
 
     def test_genero_sin_resultados_muestra_mensaje(self):
         response = self.client.get("/libros/?genero=poesia")

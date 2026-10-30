@@ -5,6 +5,12 @@
 {% block content %}
     <h1>Libros{% if genero %} de {{ genero }}{% endif %}</h1>
 
+    <form method="get" action="{% url 'buscar_libros_por_nombre' %}">
+        <label for="nombre">Buscar por nombre:</label>
+        <input id="nombre" name="nombre" type="search" required>
+        <button type="submit">Buscar</button>
+    </form>
+
     <p>
         Filtrar:
         <a href="{% url 'lista_libros' %}">Todos</a> |
@@ -13,17 +19,28 @@
         <a href="{% url 'lista_libros' %}?genero=ciencia">Ciencia</a>
     </p>
 
-    <ul>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Autor</th>
+            </tr>
+        </thead>
+        <tbody>
         {% for libro in libros %}
-            <li>
-                <a href="{% url 'detalle_libro' libro.id %}">{{ libro.titulo }}</a>
-                ({{ libro.anio }})
-                {% if libro.disponible %}Disponible{% else %}Prestado{% endif %}
-            </li>
+            <tr>
+                <td>{{ libro.id }}</td>
+                <td><a href="{% url 'detalle_libro' libro.id %}">{{ libro.titulo }}</a></td>
+                <td>{{ libro.autor }}</td>
+            </tr>
         {% empty %}
-            <li>No hay libros de ese género.</li>
+            <tr>
+                <td colspan="3">No hay libros de ese género.</td>
+            </tr>
         {% endfor %}
-    </ul>
+        </tbody>
+    </table>
 
     <p>Total: {{ libros|length }}</p>
 {% endblock %}

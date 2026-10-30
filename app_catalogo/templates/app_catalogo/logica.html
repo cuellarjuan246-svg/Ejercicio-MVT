@@ -1,35 +1,27 @@
 {% extends "app_catalogo/base.html" %}
 
-{% block title %}Estadísticas del catálogo{% endblock %}
+{% block title %}Libros, autores y años{% endblock %}
 
 {% block content %}
-    <h1>Estadísticas del catálogo</h1>
-    <p>Total de libros: {{ total }}</p>
-    <p>Disponibles: {{ disponibles }}</p>
-    <p>Prestados: {{ prestados }}</p>
-    <p>Porcentaje disponible: {{ porcentaje_disponible }}%</p>
-
-    {% if porcentaje_disponible < 50 %}
-        <p><strong>Advertencia:</strong> menos de la mitad de los libros están disponibles.</p>
-    {% endif %}
-
-    <h2>Libros por género</h2>
+    <h1>Libros, autores y años</h1>
     <table>
         <thead>
             <tr>
-                <th>Género</th>
-                <th>Cantidad de libros</th>
+                <th>Autor</th>
+                <th>Libro</th>
+                <th>Año</th>
             </tr>
         </thead>
         <tbody>
-            {% for fila in libros_por_genero %}
+            {% for libro in libros %}
                 <tr>
-                    <td>{{ fila.genero }}</td>
-                    <td>{{ fila.cantidad }}</td>
+                    <td>{{ libro.autor }}</td>
+                    <td>{{ libro.titulo }}</td>
+                    <td>{{ libro.anio }}</td>
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="2">No hay libros en el catálogo.</td>
+                    <td colspan="3">No hay libros en el catálogo.</td>
                 </tr>
             {% endfor %}
         </tbody>
