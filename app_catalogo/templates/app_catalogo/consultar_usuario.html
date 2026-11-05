@@ -1,0 +1,41 @@
+{% extends "app_catalogo/base.html" %}
+
+{% block title %}Consultar usuario{% endblock %}
+
+{% block content %}
+    <h1>Consultar usuario por ID</h1>
+
+    <form method="get" action="{% url 'consultar_usuario' %}">
+        <label for="id">ID del usuario:</label>
+        <input id="id" name="id" type="number" min="1" required value="{{ usuario_id|default:'' }}">
+        <button type="submit">Consultar</button>
+    </form>
+    <br>
+
+    {% if error %}
+        <p>{{ error }}</p>
+    {% elif usuario_obj %}
+        <div style="border: 2px solid #222; padding: 12px;">
+            <h2>{{ usuario_obj.nombre }} (ID: {{ usuario_obj.id }})</h2>
+            <p><strong>Correo:</strong> {{ usuario_obj.correo }}</p>
+            <p><strong>Tipo de documento:</strong> {{ usuario_obj.get_tipo_documento_display }}</p>
+            <p><strong>Número de documento:</strong> {{ usuario_obj.numero_documento|default:"Sin registrar" }}</p>
+            <p><strong>Teléfono:</strong> {{ usuario_obj.telefono|default:"Sin registrar" }}</p>
+            <p><strong>Fecha de nacimiento:</strong> {{ usuario_obj.fecha_nacimiento }}</p>
+            <p><strong>Género:</strong> {{ usuario_obj.get_genero_display }}</p>
+            <p><strong>Rol:</strong> {{ usuario_obj.get_rol_display }}</p>
+            <p><strong>Fecha de registro:</strong> {{ usuario_obj.fecha_registro }}</p>
+
+            {% if usuario_obj.rol == "estudiante" %}
+                <h3>Datos de estudiante</h3>
+                {% if perfil_estudiante %}
+                    <p><strong>Dirección:</strong> {{ perfil_estudiante.direccion }}</p>
+                    <p><strong>Teléfono:</strong> {{ perfil_estudiante.telefono }}</p>
+                    <p><strong>Grado escolar:</strong> {{ perfil_estudiante.grado_escolar }}</p>
+                {% else %}
+                    <p>Este estudiante todavía no completó su registro. <a href="{% url 'completar_registro' usuario_obj.id %}">Completarlo ahora</a>.</p>
+                {% endif %}
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "app_catalogo/base.html" %}
+
+{% block title %}Búsqueda de autor: {{ criterio }}{% endblock %}
+
+{% block content %}
+    <h1>Resultados para “{{ criterio }}”</h1>
+
+    {% for resultado in resultados %}
+        <div style="border: 2px solid #222; padding: 12px; margin-bottom: 16px;">
+            <h2>{{ resultado.autor.nombre }} (ID: {{ resultado.autor.id }})</h2>
+            <p><strong>Nacionalidad:</strong> {{ resultado.autor.nacionalidad }}</p>
+            <p><strong>Fecha de nacimiento:</strong> {{ resultado.autor.fecha_nacimiento }}</p>
+            <p><strong>Biografía:</strong> {{ resultado.autor.biografia }}</p>
+
+            <h3>Libros de este autor</h3>
+            <table style="width: 100%; border: 1px solid #222; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th style="border: 1px solid #222; padding: 8px;">ID</th>
+                        <th style="border: 1px solid #222; padding: 8px;">Título</th>
+                        <th style="border: 1px solid #222; padding: 8px;">Año</th>
+                        <th style="border: 1px solid #222; padding: 8px;">Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for libro in resultado.libros %}
+                        <tr>
+                            <td style="border: 1px solid #222; padding: 8px;">{{ libro.id }}</td>
+                            <td style="border: 1px solid #222; padding: 8px;"><a href="{% url 'detalle_libro' libro.id %}">{{ libro.titulo }}</a></td>
+                            <td style="border: 1px solid #222; padding: 8px;">{{ libro.anio_publicacion }}</td>
+                            <td style="border: 1px solid #222; padding: 8px;">{{ libro.disponible|yesno:"Disponible,No disponible" }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4" style="border: 1px solid #222; padding: 8px;">Este autor no tiene libros registrados.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% empty %}
+        <p>No se encontró ningún autor con “{{ criterio }}”.</p>
+    {% endfor %}
+{% endblock %}

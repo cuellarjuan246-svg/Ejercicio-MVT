@@ -4,6 +4,13 @@ from django.db import models
 class usuario(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
+    tipo_documento = models.CharField(
+        max_length=2,
+        choices=[("CC", "Cédula de ciudadanía"), ("TI", "Tarjeta de identidad"), ("CE", "Cédula de extranjería"), ("PA", "Pasaporte")],
+        default="CC",
+    )
+    numero_documento = models.CharField(max_length=20, blank=True, default="")
+    telefono = models.CharField(max_length=20, blank=True, default="")
     correo = models.EmailField(unique=True)
     fecha_registro = models.DateTimeField(auto_now_add=True)
     fecha_nacimiento = models.DateField()
@@ -43,7 +50,7 @@ class estudiante(models.Model):
         return self.estudiante.nombre
 
 class autor(models.Model):
-    id = models.OneToOneField(usuario, on_delete=models.CASCADE, primary_key=True)
+    id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
     biografia = models.TextField()
     fecha_nacimiento = models.DateField()

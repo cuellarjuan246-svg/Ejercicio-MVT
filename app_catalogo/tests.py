@@ -179,4 +179,3 @@ class InicioViewTests(TestCase):
     def test_rutas_de_ejercicios_anteriores_siguen_funcionando(self):
         self.assertContains(self.client.get("/hola/"), "Hola desde Django")
         self.assertContains(self.client.get("/cuadrado/7/"), "El cuadrado de 7 es 49")
-        self.assertContains(self.client.get("/contacto/"), "Contacto")

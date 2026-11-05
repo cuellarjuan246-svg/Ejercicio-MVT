@@ -1,0 +1,36 @@
+{% extends "app_catalogo/base.html" %}
+
+{% block title %}Completar registro{% endblock %}
+
+{% block content %}
+    <h1>Completar registro de estudiante</h1>
+    <p>{{ usuario_obj.nombre }} (ID: {{ usuario_obj.id }}) se registró como estudiante. Completa sus datos adicionales:</p>
+
+    {% if ya_completo %}
+        <p>Este estudiante ya completó su registro.</p>
+    {% elif completado %}
+        <p>¡Registro completado! {{ usuario_obj.nombre }} ya tiene su perfil de estudiante.</p>
+    {% else %}
+        <form method="post" action="{% url 'completar_registro' usuario_obj.id %}">
+            {% csrf_token %}
+
+            <label for="direccion">Dirección:</label>
+            <input type="text" id="direccion" name="direccion" required placeholder="Dirección" value="{{ direccion|default:'' }}">
+            <br><br>
+
+            <label for="telefono">Teléfono:</label>
+            <input type="tel" id="telefono" name="telefono" required placeholder="Teléfono" value="{{ telefono|default:'' }}">
+            <br><br>
+
+            <label for="grado_escolar">Grado escolar:</label>
+            <input type="text" id="grado_escolar" name="grado_escolar" required placeholder="Grado escolar" value="{{ grado_escolar|default:'' }}">
+            <br><br>
+
+            <button type="submit">Completar registro</button>
+        </form>
+
+        {% if error %}
+            <p>{{ error }}</p>
+        {% endif %}
+    {% endif %}
+{% endblock %}

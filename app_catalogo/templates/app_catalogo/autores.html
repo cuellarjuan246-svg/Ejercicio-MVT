@@ -4,6 +4,14 @@
 
 {% block content %}
     <h1>Autores</h1>
+
+    <form method="get" action="{% url 'buscar_autor' %}">
+        <label for="autor">Buscar autor por nombre o ID:</label>
+        <input id="autor" name="autor" type="search" required>
+        <button type="submit">Buscar</button>
+    </form>
+    <br>
+
     <ul>
         {% for autor in autores %}
             <li>{{ autor.nombre }}: {{ autor.cantidad_libros }} libros</li>
